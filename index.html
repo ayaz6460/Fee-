@@ -4,83 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>College Fee Payment</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Gradient background for the body */
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+        }
+
+        /* Keyframe animation for fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Apply fade-in animation to elements with this class */
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Keyframe animation for subtle pulse on hover */
+        @keyframes pulse-effect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        /* Apply pulse animation on hover */
+        .hover-pulse:hover {
+            animation: pulse-effect 0.3s ease-in-out;
+        }
+
+        /* Custom styling for the modal overlay */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96 text-center">
-        <h2 class="text-2xl font-bold text-gray-700 mb-4">Fee Payment Portal</h2>
-        <input type="text" id="rollNumber" placeholder="Enter Roll Number"
-               class="w-full p-2 border border-gray-300 rounded-md mb-3">
-        <button onclick="fetchDues()" class="bg-blue-600 text-white px-4 py-2 rounded-md w-full">
+<body class="flex items-center justify-center min-h-screen p-4">
+    <!-- Main container for the payment portal -->
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md text-center transform transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-6 flex items-center justify-center gap-2 drop-shadow-sm">
+            <!-- Icon for the portal title -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+            </svg>
+            Fee Payment Portal
+        </h2>
+        
+        <!-- Input field for Roll Number with an icon -->
+        <div class="relative mb-4">
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number"
+                   class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 peer">
+            <!-- SVG icon for user -->
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 peer-focus:text-blue-600 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        
+        <!-- Button to fetch dues -->
+        <button onclick="fetchDues()" 
+                class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg w-full font-semibold shadow-md hover:from-blue-600 hover:to-blue-800 transition-all duration-300 transform active:scale-95 hover-pulse">
             Get Dues
         </button>
 
-        <div id="duesSection" class="hidden mt-4">
-            <p><strong>Name:</strong> <span id="studentName"></span></p>
-            <p><strong>College Fees:</strong> ₹<span id="collegeFees"></span></p>
-            <p><strong>Transport Fees:</strong> ₹<span id="transportFees"></span></p>
-            <p><strong>Pending Fees:</strong> ₹<span id="pendingFees"></span></p>
+        <!-- Section to display dues, initially hidden -->
+        <div id="duesSection" class="hidden mt-6 bg-blue-50 bg-opacity-70 p-5 rounded-lg border border-blue-200 animate-fadeIn">
+            <p class="text-left mb-2 text-gray-700"><strong>Name:</strong> <span id="studentName" class="font-medium text-gray-900"></span></p>
+            <p class="text-left mb-2 text-gray-700"><strong>College Fees:</strong> ₹<span id="collegeFees" class="font-medium text-gray-900"></span></p>
+            <p class="text-left mb-2 text-gray-700"><strong>Transport Fees:</strong> ₹<span id="transportFees" class="font-medium text-gray-900"></span></p>
+            <p class="text-left border-t pt-2 mt-2 border-blue-200 text-gray-800 font-bold"><strong>Pending Fees:</strong> ₹<span id="pendingFees" class="text-red-600"></span></p>
 
-            <input type="number" id="payAmount" placeholder="Enter amount to pay"
-                   class="w-full p-2 border border-gray-300 rounded-md mt-3">
-            <button onclick="makePayment()" class="bg-green-600 text-white px-4 py-2 rounded-md w-full mt-3">
+            <!-- Input field for amount to pay with an icon -->
+            <div class="relative mt-5">
+                <input type="number" id="payAmount" placeholder="Enter amount to pay"
+                       class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 peer">
+                <!-- SVG icon for currency -->
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 peer-focus:text-green-600 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+            
+            <!-- Button to make payment -->
+            <button onclick="makePayment()" 
+                    class="bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-3 rounded-lg w-full font-semibold shadow-md hover:from-green-600 hover:to-green-800 transition-all duration-300 transform active:scale-95 mt-4 hover-pulse">
                 Pay Now
             </button>
         </div>
     </div>
 
+    <!-- Custom Modal for messages -->
+    <div id="customModal" class="hidden fixed inset-0 flex items-center justify-center z-50 modal-overlay animate-fadeIn">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-80 text-center relative transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+            <h3 class="text-xl font-bold mb-4 text-gray-800" id="modalTitle"></h3>
+            <p class="text-gray-600 mb-6" id="modalMessage"></p>
+            <div class="flex justify-center gap-4">
+                <button id="modalConfirmBtn" class="hidden bg-green-500 text-white px-5 py-2 rounded-md hover:bg-green-600 transition-colors duration-200">Confirm</button>
+                <button id="modalCloseBtn" class="bg-blue-500 text-white px-5 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Get references to modal elements
+        const customModal = document.getElementById('customModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+
+        /**
+         * Displays a custom modal with a given title and message.
+         * @param {string} title - The title of the modal.
+         * @param {string} message - The message content of the modal.
+         * @param {boolean} isConfirm - If true, displays a confirm button.
+         * @returns {Promise<boolean>} Resolves to true if confirmed, false if cancelled/closed.
+         */
+        function showModal(title, message, isConfirm = false) {
+            return new Promise((resolve) => {
+                modalTitle.innerText = title;
+                modalMessage.innerText = message;
+                customModal.classList.remove('hidden');
+                modalContent.classList.add('scale-100', 'opacity-100'); // Animate in
+
+                // Reset buttons
+                modalConfirmBtn.classList.add('hidden');
+                modalCloseBtn.onclick = () => {
+                    modalContent.classList.remove('scale-100', 'opacity-100'); // Animate out
+                    modalContent.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        customModal.classList.add('hidden');
+                        resolve(false); // User closed/cancelled
+                    }, 300); // Match animation duration
+                };
+
+                if (isConfirm) {
+                    modalConfirmBtn.classList.remove('hidden');
+                    modalConfirmBtn.onclick = () => {
+                        modalContent.classList.remove('scale-100', 'opacity-100');
+                        modalContent.classList.add('scale-95', 'opacity-0');
+                        setTimeout(() => {
+                            customModal.classList.add('hidden');
+                            resolve(true); // User confirmed
+                        }, 300);
+                    };
+                }
+            });
+        }
+
+        /**
+         * Fetches outstanding dues for a given roll number from the backend.
+         */
         async function fetchDues() {
-            const rollNumber = document.getElementById("rollNumber").value;
+            const rollNumberInput = document.getElementById("rollNumber");
+            const rollNumber = rollNumberInput.value.trim();
+
             if (!rollNumber) {
-                alert("Please enter roll number");
+                await showModal("Input Required", "Please enter your Roll Number.");
+                rollNumberInput.focus();
                 return;
             }
 
-            const response = await fetch(`http://localhost:5000/api/get-dues/${rollNumber}`);
-            const data = await response.json();
+            try {
+                // Fetch data from the backend API
+                const response = await fetch(`http://localhost:5000/api/get-dues/${rollNumber}`);
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
 
-            if (data.error) {
-                alert("Student not found!");
-                return;
+                // If the backend returns an error message
+                if (data.error) {
+                    await showModal("Student Not Found", "No student found with the provided Roll Number. Please try again.");
+                    document.getElementById("duesSection").classList.add("hidden");
+                    return;
+                }
+
+                // Populate the UI with fetched data
+                document.getElementById("studentName").innerText = data.name;
+                document.getElementById("collegeFees").innerText = data.college_fees;
+                document.getElementById("transportFees").innerText = data.transport_fees;
+                document.getElementById("pendingFees").innerText = data.pending_fees;
+
+                // Show the dues section and apply fade-in animation
+                const duesSection = document.getElementById("duesSection");
+                duesSection.classList.remove("hidden");
+                duesSection.classList.add("animate-fadeIn");
+                
+                // Scroll to the dues section smoothly for better UX
+                duesSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            } catch (error) {
+                console.error("Error fetching dues:", error);
+                await showModal("Error", "Failed to fetch dues. Please ensure the backend is running and try again.");
+                document.getElementById("duesSection").classList.add("hidden");
             }
-
-            document.getElementById("studentName").innerText = data.name;
-            document.getElementById("collegeFees").innerText = data.college_fees;
-            document.getElementById("transportFees").innerText = data.transport_fees;
-            document.getElementById("pendingFees").innerText = data.pending_fees;
-
-            document.getElementById("duesSection").classList.remove("hidden");
         }
       
-     
+        /**
+         * Initiates the payment process with the entered amount.
+         */
         async function makePayment() {
-            const rollNumber = document.getElementById("rollNumber").value;
-            const amount = document.getElementById("payAmount").value;
-          
+            const rollNumber = document.getElementById("rollNumber").value.trim();
+            const payAmountInput = document.getElementById("payAmount");
+            const amount = parseFloat(payAmountInput.value);
+            const pendingFees = parseFloat(document.getElementById("pendingFees").innerText);
 
-            // if (!amount || amount <= 0) {
-            //     alert("Enter a valid amount");
-            //     return;
-            // }
-            // if(amount < 500 || amount > 10000){
-            //     alert("Enter a valid amount");
-            //     return;
-            // }
-            const response = await fetch("http://localhost:5000/api/pay", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ rollNumber, amount }),
-            });
+            // Basic client-side validation for the payment amount
+            if (isNaN(amount) || amount <= 0) {
+                await showModal("Invalid Amount", "Please enter a valid amount greater than zero to pay.");
+                payAmountInput.focus();
+                return;
+            }
             
-            const result = await response.json();
-
-            if (result.error) {
-                alert("Payment error: " + result.error);
+            // Example: Client-side validation for amount range. Backend should also validate.
+            if (amount > 1000000) { // Arbitrary large number cap
+                await showModal("Amount Too Large", "For payments exceeding ₹1,000,000, please contact college administration directly.");
                 return;
             }
 
-            window.location.href = result.paymentLink;
+            // Confirm if the user is paying more than the pending amount
+            if (amount > pendingFees && pendingFees > 0) {
+                const confirmed = await showModal(
+                    "Confirm Payment", 
+                    `You are attempting to pay ₹${amount} which is more than your current pending fees of ₹${pendingFees}. Do you wish to proceed?`, 
+                    true // isConfirm = true
+                );
+                if (!confirmed) {
+                    return; // User cancelled
+                }
+            }
+
+            try {
+                // Send payment request to the backend API
+                const response = await fetch("http://localhost:5000/api/pay", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ rollNumber, amount }),
+                });
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Handle errors returned from the backend's payment logic
+                if (result.error) {
+                    await showModal("Payment Error", "Payment processing failed: " + result.error);
+                    return;
+                }
+
+                // Redirect to the payment link provided by the backend
+                if (result.paymentLink) {
+                    await showModal("Redirecting", "Payment initiated successfully. Redirecting you to the payment gateway...");
+                    // Add a small delay for the user to read the message
+                    setTimeout(() => {
+                        window.location.href = result.paymentLink;
+                    }, 1500); 
+                } else {
+                    // This case should ideally not happen if the backend always provides a link
+                    await showModal("Payment Success", "Payment processed successfully. No redirection link provided by the backend.");
+                    // Optionally re-fetch dues to show updated pending amount
+                    fetchDues(); 
+                }
+
+            } catch (error) {
+                console.error("Error making payment:", error);
+                await showModal("Payment Failed", "An error occurred during payment processing: " + error.message);
+            }
         }
     </script>
 </body>
