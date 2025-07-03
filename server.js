@@ -177,7 +177,11 @@ app.get('/api/generate-receipt/:orderId/:rollNumber/:amount', async (req, res) =
         res.status(500).json({ error: err.message });
     }
 });
+app.get('/', (req, res) => {
+  res.send('✅ Backend server is running on Railway!');
+});
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+
