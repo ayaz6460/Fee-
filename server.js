@@ -44,7 +44,7 @@ app.post('/api/pay', async (req, res) => {
     try {
         const orderId = `ORDER_${Date.now()}`;
         const cashfreeResponse = await axios.post(
-            'https://api.cashfree.com/pg/orders', // PRODUCTION URL
+            'https://sandbox.cashfree.com/pg/orders', // PRODUCTION URL
             {
                 order_id: orderId,
                 order_amount: amount,
