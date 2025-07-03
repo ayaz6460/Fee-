@@ -178,10 +178,15 @@ app.get('/api/generate-receipt/:orderId/:rollNumber/:amount', async (req, res) =
     }
 });
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  const filePath = path.join(__dirname, 'index.html');
+  console.log("Serving index.html from:", filePath);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending index.html:", err);
+      res.status(500).send("Frontend error");
+    }
+  });
 });
-
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
