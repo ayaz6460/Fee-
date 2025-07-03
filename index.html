@@ -57,6 +57,16 @@
         async function makePayment() {
             const rollNumber = document.getElementById("rollNumber").value;
             const amount = document.getElementById("payAmount").value;
+          
+
+            // if (!amount || amount <= 0) {
+            //     alert("Enter a valid amount");
+            //     return;
+            // }
+            // if(amount < 500 || amount > 10000){
+            //     alert("Enter a valid amount");
+            //     return;
+            // }
             const response = await fetch("http://localhost:5000/api/pay", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
